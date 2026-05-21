@@ -70,7 +70,16 @@ WEB_PORT=80
 ## 4. Levantar el sistema
 
 ```bash
-docker compose -f docker-compose.prod.yml up -d --build
+# network: host en el compose ayuda a npm dentro del build en la Pi
+DOCKER_BUILDKIT=1 docker compose -f docker-compose.prod.yml up -d --build
+```
+
+Si falla `npm ci` por red, probá **una imagen a la vez**:
+
+```bash
+DOCKER_BUILDKIT=1 docker compose -f docker-compose.prod.yml build api
+DOCKER_BUILDKIT=1 docker compose -f docker-compose.prod.yml build web
+DOCKER_BUILDKIT=1 docker compose -f docker-compose.prod.yml up -d
 ```
 
 La **primera vez** tarda **20–40 minutos** en la Pi (compila backend + frontend). Las siguientes son más rápidas.
@@ -150,8 +159,44 @@ En el router, reservá DHCP para la MAC de la Pi así la IP no cambia entre rein
 | Login falla / 401 | Revisá `JWT_SECRET` en `.env` y reiniciá: `docker compose ... restart api web` |
 | Error CORS | `CORS_ORIGINS` debe coincidir con la URL que usás (con `http://`, sin `/` final) |
 | Build muy lento | Normal en Pi; dejá correr. Usá SSD. |
+| **`npm ci` / network error** en build | Ver sección abajo |
 | Sin memoria | Pi 4 2GB alcanza; cerrá otras apps. Podés parar `print-worker`. |
 | API docs | Solo en red interna: `docker compose exec api wget -qO- http://localhost:3000/api/docs` |
+
+## Error `npm ci` / network durante el build
+
+Dentro de Docker la Pi a veces no llega a `registry.npmjs.org`. Probá en orden:
+
+**1. Verificar internet en la Pi (fuera de Docker):**
+```bash
+ping -c 3 registry.npmjs.org
+curl -I https://registry.npmjs.org
+```
+
+**2. Actualizar el repo** (incluye Dockerfiles con reintentos y `network: host`):
+```bash
+cd ~/gestion_bar
+git pull
+```
+
+**3. Rebuild limpio:**
+```bash
+DOCKER_BUILDKIT=1 docker compose -f docker-compose.prod.yml build --no-cache api
+DOCKER_BUILDKIT=1 docker compose -f docker-compose.prod.yml build --no-cache web
+docker compose -f docker-compose.prod.yml up -d
+```
+
+**4. DNS en Docker** (si sigue fallando), editá `/etc/docker/daemon.json`:
+```json
+{
+  "dns": ["8.8.8.8", "1.1.1.1"]
+}
+```
+```bash
+sudo systemctl restart docker
+```
+
+**5. Alternativa:** build en tu PC con Docker Buildx para ARM y exportar imágenes (solo si nada más funciona).
 
 ## Seguridad (demo en casa)
 
