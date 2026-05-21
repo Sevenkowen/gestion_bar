@@ -17,11 +17,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 384M
-
   api:
     build:
       context: ./backend
@@ -44,12 +39,8 @@ services:
       test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/api/v1/health']
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 40s
-    deploy:
-      resources:
-        limits:
-          memory: 512M
+      retries: 8
+      start_period: 120s
 
   print-worker:
     build:
@@ -65,10 +56,6 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-sistemabar}:${POSTGRES_PASSWORD:-sistemabar_secret}@postgres:5432/${POSTGRES_DB:-sistemabar}?schema=public
       NODE_ENV: production
     command: node dist/src/worker/print.worker.js
-    deploy:
-      resources:
-        limits:
-          memory: 256M
 
   web:
     build:
@@ -85,10 +72,6 @@ services:
         condition: service_healthy
     ports:
       - '${WEB_PORT:-80}:80'
-    deploy:
-      resources:
-        limits:
-          memory: 128M
 
 volumes:
   postgres_data:
