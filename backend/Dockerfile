@@ -3,8 +3,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# bcrypt compila nativo en ARM (Raspberry Pi)
-RUN apk add --no-cache python3 make g++
+# bcrypt compila nativo en ARM (Raspberry Pi); openssl para Prisma en Alpine
+RUN apk add --no-cache python3 make g++ openssl
 
 COPY package*.json ./
 COPY prisma ./prisma/
