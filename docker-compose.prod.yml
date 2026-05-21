@@ -1,0 +1,91 @@
+# SistemaBar — producción (Raspberry Pi / red local)
+# Uso: docker compose -f docker-compose.prod.yml up -d --build
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sistemabar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sistemabar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sistemabar_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-sistemabar}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-sistemabar} -d ${POSTGRES_DB:-sistemabar}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sistemabar-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sistemabar}:${POSTGRES_PASSWORD:-sistemabar_secret}@postgres:5432/${POSTGRES_DB:-sistemabar}?schema=public
+      PORT: 3000
+      NODE_ENV: production
+      JWT_SECRET: ${JWT_SECRET:?Definí JWT_SECRET en .env}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost}
+    command: sh -c "npx prisma migrate deploy && node dist/src/main.js"
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/api/v1/health']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  print-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sistemabar-print
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sistemabar}:${POSTGRES_PASSWORD:-sistemabar_secret}@postgres:5432/${POSTGRES_DB:-sistemabar}?schema=public
+      NODE_ENV: production
+    command: node dist/src/worker/print.worker.js
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ''
+        VITE_WS_URL: ''
+    container_name: sistemabar-web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - '${WEB_PORT:-80}:80'
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+volumes:
+  postgres_data:
