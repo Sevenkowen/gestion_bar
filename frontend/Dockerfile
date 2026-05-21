@@ -8,11 +8,12 @@ ENV NODE_OPTIONS=--max-old-space-size=2048
 
 COPY package*.json ./
 
+# postinstall (quasar prepare) necesita quasar.config.ts; instalar sin scripts
 RUN npm config set fetch-retries 10 \
  && npm config set fetch-retry-mintimeout 30000 \
  && npm config set fetch-retry-maxtimeout 300000 \
  && npm config set registry https://registry.npmjs.org/ \
- && npm ci --no-audit --fund=false
+ && npm ci --no-audit --fund=false --ignore-scripts
 
 COPY . .
 
@@ -21,7 +22,7 @@ ARG VITE_WS_URL=
 ENV VITE_API_URL=$VITE_API_URL
 ENV VITE_WS_URL=$VITE_WS_URL
 
-RUN npm run build
+RUN npx quasar prepare && npm run build
 
 FROM nginx:alpine AS production
 
