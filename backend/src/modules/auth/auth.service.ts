@@ -1,8 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
+import { promisify } from 'util';
 import { PrismaService } from '../../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
+
+const bcryptCompare = promisify(bcrypt.compare);
+const bcryptHash = promisify(bcrypt.hash);
 
 @Injectable()
 export class AuthService {
@@ -21,7 +25,7 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const valid = await bcrypt.compare(dto.password, user.passwordHash);
+    const valid = await bcryptCompare(dto.password, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
@@ -47,6 +51,6 @@ export class AuthService {
   }
 
   async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 12);
+    return bcryptHash(password, 12) as Promise<string>;
   }
 }

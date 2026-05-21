@@ -6,7 +6,10 @@ import {
   UnitType,
   TableStatus,
 } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
+import { promisify } from 'util';
+
+const bcryptHash = promisify(bcrypt.hash);
 
 const prisma = new PrismaClient();
 
@@ -19,7 +22,7 @@ async function main() {
     create: { name: 'Local Principal', address: 'Av. Principal 123' },
   });
 
-  const passwordHash = await bcrypt.hash('admin123', 12);
+  const passwordHash = await bcryptHash('admin123', 12);
 
   await prisma.user.upsert({
     where: { username: 'admin' },
@@ -33,7 +36,7 @@ async function main() {
     },
   });
 
-  const mozoHash = await bcrypt.hash('mozo123', 12);
+  const mozoHash = await bcryptHash('mozo123', 12);
   await prisma.user.upsert({
     where: { username: 'mozo1' },
     update: {},
@@ -46,7 +49,7 @@ async function main() {
     },
   });
 
-  const cajaHash = await bcrypt.hash('caja123', 12);
+  const cajaHash = await bcryptHash('caja123', 12);
   await prisma.user.upsert({
     where: { username: 'caja1' },
     update: {},
