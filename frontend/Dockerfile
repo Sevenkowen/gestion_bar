@@ -1,7 +1,10 @@
-# Build PWA/SPA — URLs vacías = mismo host vía nginx (/api, /socket.io)
-FROM node:20-alpine AS builder
+# Quasar 2.6 requiere Node >= 22.22
+FROM node:22-alpine AS builder
 
 WORKDIR /app
+
+# Build frontend en Pi puede usar bastante RAM
+ENV NODE_OPTIONS=--max-old-space-size=2048
 
 COPY package*.json ./
 
