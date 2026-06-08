@@ -7,7 +7,6 @@ import * as path from 'path';
 import * as XLSX from 'xlsx';
 import { IngredientKind, PrismaClient, UnitType } from '@prisma/client';
 
-const prisma = new PrismaClient();
 const EXCEL_PATH = path.join(__dirname, 'data', 'insumos-bar.xlsx');
 const DEMO_COST = 1;
 const DEMO_STOCK = 100;
@@ -18,6 +17,14 @@ type RawRow = {
   kind: IngredientKind;
   unit: UnitType;
   tag?: string;
+};
+
+export type ImportInsumosResult = {
+  total: number;
+  created: number;
+  updated: number;
+  cocina: number;
+  bebida: number;
 };
 
 function normalizeUnit(medida: string | undefined): UnitType {
@@ -115,17 +122,20 @@ function assignUniqueNames(rows: RawRow[]): RawRow[] {
   });
 }
 
-async function main() {
-  console.log('📥 Importando insumos desde Excel...');
-  console.log(`   Archivo: ${EXCEL_PATH}`);
-
+function loadExcelRows(): RawRow[] {
   const wb = XLSX.readFile(EXCEL_PATH);
-  const rows = assignUniqueNames([
+  return assignUniqueNames([
     ...parseMateriaPrima(sheetRows(wb, 'MATERIA PRIMA')),
     ...parseSubproducto(sheetRows(wb, 'SUBPRODUCTO')),
     ...parseProductosBar(sheetRows(wb, 'PRODUCTOS BAR')),
   ]);
+}
 
+export async function importInsumosFromExcel(prisma: PrismaClient): Promise<ImportInsumosResult> {
+  console.log('📥 Importando insumos desde Excel...');
+  console.log(`   Archivo: ${EXCEL_PATH}`);
+
+  const rows = loadExcelRows();
   console.log(`   ${rows.length} insumos a cargar (costo demo: $${DEMO_COST})`);
 
   let created = 0;
@@ -157,14 +167,26 @@ async function main() {
   const cocina = rows.filter((r) => r.kind === IngredientKind.COCINA).length;
   const bebida = rows.filter((r) => r.kind === IngredientKind.BEBIDA).length;
 
-  console.log('✅ Importación completada');
+  console.log('✅ Importación Excel completada');
   console.log(`   Nuevos: ${created} | Actualizados: ${updated}`);
   console.log(`   Cocina: ${cocina} | Bebida: ${bebida}`);
+
+  return { total: rows.length, created, updated, cocina, bebida };
 }
 
-main()
-  .catch((err) => {
-    console.error('❌ Error:', err);
-    process.exit(1);
-  })
-  .finally(() => prisma.$disconnect());
+async function main() {
+  const prisma = new PrismaClient();
+  try {
+    await importInsumosFromExcel(prisma);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+if (require.main === module) {
+  main()
+    .catch((err) => {
+      console.error('❌ Error:', err);
+      process.exit(1);
+    });
+}

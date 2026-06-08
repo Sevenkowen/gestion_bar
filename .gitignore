@@ -14,3 +14,7 @@ Thumbs.db
 
 # Docker volumes locales
 postgres_data/
+
+# Backups de base (no commitear)
+backups/
+*.dump

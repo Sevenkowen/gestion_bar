@@ -10,6 +10,7 @@ import {
 } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { promisify } from 'util';
+import { importInsumosFromExcel } from './import-insumos';
 
 const bcryptHash = promisify(bcrypt.hash);
 const prisma = new PrismaClient();
@@ -194,6 +195,9 @@ async function main() {
     update: { sortOrder: 4 },
     create: { name: 'Bebidas', sortOrder: 4, branchId: branch.id },
   });
+
+  // Excel del cliente (100 insumos) — antes de recetas demo
+  await importInsumosFromExcel(prisma);
 
   // ── Insumos cocina (recetas) ────────────────────────────────
   const pan = await upsertIngredient('Pan hamburguesa', {
