@@ -12,8 +12,8 @@ function logout() {
 </script>
 
 <template>
-  <q-layout view="hHh lpR fFf" class="bg-dark">
-    <q-header elevated class="bg-grey-10">
+  <q-layout view="hHh Lpr lFf" class="fit bg-dark caja-layout">
+    <q-header class="bar-panel">
       <q-toolbar>
         <q-toolbar-title>
           <q-icon name="point_of_sale" class="q-mr-sm" />
@@ -24,7 +24,7 @@ function logout() {
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above bordered class="bg-grey-10" :width="200">
+    <q-drawer show-if-above bordered class="bar-panel" :width="200">
       <q-list padding>
         <q-item v-ripple clickable to="/caja" exact>
           <q-item-section avatar><q-icon name="payments" /></q-item-section>

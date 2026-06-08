@@ -1,9 +1,25 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.store';
+import BarLogo from '@/components/brand/BarLogo.vue';
+import AdminNavList from '@/components/admin/AdminNavList.vue';
+import type { RoleName } from '@/types';
 
 const router = useRouter();
 const auth = useAuthStore();
+const drawerOpen = ref(false);
+
+const roleLabel = computed(() => {
+  const map: Record<RoleName, string> = {
+    ADMIN: 'Propietario',
+    CAJA: 'Caja',
+    MOZO: 'Mozo',
+  };
+  return auth.user?.role ? map[auth.user.role] : '';
+});
+
+const userInitial = computed(() => auth.user?.name?.charAt(0)?.toUpperCase() ?? '?');
 
 function logout() {
   auth.logout();
@@ -12,61 +28,64 @@ function logout() {
 </script>
 
 <template>
-  <q-layout view="hHh lpR fFf" class="bg-dark">
-    <q-header elevated class="bg-grey-10">
-      <q-toolbar>
-        <q-toolbar-title>
-          <q-icon name="admin_panel_settings" class="q-mr-sm" />
-          Admin
-        </q-toolbar-title>
-        <div class="q-mr-md text-caption">{{ auth.user?.name }}</div>
-        <q-btn flat round icon="logout" @click="logout" />
+  <q-layout view="hhh lpr lff" class="admin-layout">
+    <q-header class="bar-header">
+      <div class="bar-header__chalk" aria-hidden="true" />
+      <q-toolbar class="bar-header__toolbar">
+        <q-btn
+          flat
+          round
+          dense
+          icon="menu"
+          color="grey-5"
+          class="lt-md q-mr-sm"
+          @click="drawerOpen = !drawerOpen"
+        />
+
+        <div class="bar-brand row items-center no-wrap">
+          <BarLogo size="lg" />
+        </div>
+
+        <q-space />
+
+        <div class="row items-center no-wrap q-gutter-sm">
+          <div class="text-right gt-xs">
+            <div class="bar-user__name">{{ auth.user?.name }}</div>
+            <div class="bar-user__role">{{ roleLabel }}</div>
+          </div>
+          <q-avatar size="40px" class="bar-user__avatar" text-color="dark" color="primary">
+            {{ userInitial }}
+          </q-avatar>
+          <q-btn flat round dense icon="logout" color="grey-5" @click="logout">
+            <q-tooltip>Salir</q-tooltip>
+          </q-btn>
+        </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above bordered class="bg-grey-10" :width="220">
-      <q-list padding>
-        <q-item v-ripple clickable to="/admin" exact>
-          <q-item-section avatar><q-icon name="dashboard" /></q-item-section>
-          <q-item-section>Dashboard</q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/admin/productos" exact>
-          <q-item-section avatar><q-icon name="lunch_dining" /></q-item-section>
-          <q-item-section>Productos</q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/admin/combos" exact>
-          <q-item-section avatar><q-icon name="fastfood" /></q-item-section>
-          <q-item-section>Combos</q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/admin/menu" exact>
-          <q-item-section avatar><q-icon name="restaurant_menu" /></q-item-section>
-          <q-item-section>Menú / Carta</q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/admin/categorias" exact>
-          <q-item-section avatar><q-icon name="category" /></q-item-section>
-          <q-item-section>Categorías</q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/admin/insumos" exact>
-          <q-item-section avatar><q-icon name="inventory_2" /></q-item-section>
-          <q-item-section>Insumos y stock</q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/admin/mesas" exact>
-          <q-item-section avatar><q-icon name="table_restaurant" /></q-item-section>
-          <q-item-section>Mesas</q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/admin/impresoras" exact>
-          <q-item-section avatar><q-icon name="print" /></q-item-section>
-          <q-item-section>Impresoras</q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/admin/usuarios" exact>
-          <q-item-section avatar><q-icon name="people" /></q-item-section>
-          <q-item-section>Usuarios</q-item-section>
-        </q-item>
-      </q-list>
+    <q-drawer
+      v-model="drawerOpen"
+      :width="196"
+      :breakpoint="1024"
+      overlay
+      bordered
+      class="bar-drawer lt-md"
+    >
+      <q-scroll-area class="fit">
+        <AdminNavList />
+      </q-scroll-area>
     </q-drawer>
 
-    <q-page-container>
-      <router-view />
+    <q-page-container class="admin-shell">
+      <div class="admin-shell__grid">
+        <aside class="admin-shell__nav bar-frame gt-sm">
+          <AdminNavList />
+        </aside>
+
+        <main class="admin-shell__main bar-frame">
+          <router-view />
+        </main>
+      </div>
     </q-page-container>
   </q-layout>
 </template>

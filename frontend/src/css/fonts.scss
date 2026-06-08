@@ -1,0 +1,57 @@
+// Chairdrobe — tipografía local (pack grunge del cliente)
+@font-face {
+  font-family: 'Chairdrobe';
+  src: url('../assets/fonts/Chairdrobe-Bold.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Chairdrobe';
+  src: url('../assets/fonts/Chairdrobe-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+// Logo — variantes del mockup (Adobe Fonts):
+//   Script: Turbinado Pro Regular  (NO Dry, NO Bold, NO Condensed)
+//   Tagline: Novecento Sans Medium (NO Bold / ExtraBold)
+@font-face {
+  font-family: 'Turbinado Pro';
+  src:
+    url('../assets/fonts/Turbinado-Regular.ttf') format('truetype'),
+    local('Turbinado Pro Regular'),
+    local('Turbinado Pro'),
+    local('Turbinado Regular');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Novecento Sans';
+  src:
+    local('Novecento Sans Medium'),
+    local('NovecentoSans-Medium'),
+    url('../assets/fonts/NovecentoSans-Medium.woff2') format('woff2'),
+    url('../assets/fonts/NovecentoSans-Medium.woff') format('woff'),
+    url('../assets/fonts/NovecentoSans-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Novecento Sans';
+  src:
+    local('Novecento Sans Normal'),
+    local('NovecentoSans-Normal'),
+    url('../assets/fonts/NovecentoSans-Normal.woff2') format('woff2'),
+    url('../assets/fonts/NovecentoSans-Normal.woff') format('woff'),
+    url('../assets/fonts/NovecentoSans-Normal.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

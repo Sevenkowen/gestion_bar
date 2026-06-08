@@ -2,7 +2,7 @@
   "name": "sistemabar-frontend",
   "version": "0.1.0",
   "description": "PWA SistemaBar — bar & restaurante",
-  "productName": "SistemaBar",
+  "productName": "La cocina del Flaco",
   "author": "Sevenkowen <sevenkowen@hotmail.com>",
   "type": "module",
   "private": true,

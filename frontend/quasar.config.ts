@@ -29,6 +29,7 @@ export default defineConfig((/* ctx */) => {
 
       'roboto-font', // optional, you are not bound to it
       'material-icons', // optional, you are not bound to it
+      'material-icons-outlined',
     ],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
@@ -164,8 +165,8 @@ export default defineConfig((/* ctx */) => {
       // swFilename: 'sw.js',
       // manifestFilename: 'manifest.json',
       extendManifestJson(json) {
-        json.name = 'SistemaBar';
-        json.short_name = 'SistemaBar';
+        json.name = 'La cocina del Flaco';
+        json.short_name = 'La cocina del Flaco';
         json.description = 'Gestión bar & restaurante';
         json.display = 'standalone';
         json.theme_color = '#1a1a1a';

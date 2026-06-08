@@ -1,3 +1,182 @@
+@import './fonts.scss';
+@import './bar-theme.scss';
+
+html,
+body,
+#q-app {
+  height: 100%;
+}
+
 body {
-  background: #121212;
+  background: var(--bar-bg);
+  color: var(--bar-text);
+  scrollbar-color: #3d3520 var(--bar-surface);
+  scrollbar-width: thin;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3d3520 var(--bar-surface);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--bar-surface);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #3d3520;
+  border-radius: 4px;
+  border: 2px solid var(--bar-surface);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--bar-gold-dim);
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--bar-surface);
+}
+
+.q-scrollarea__thumb {
+  background: #3d3520 !important;
+  opacity: 0.9 !important;
+  border-radius: 4px !important;
+}
+
+.q-scrollarea__thumb:hover {
+  background: var(--bar-gold-dim) !important;
+  opacity: 1 !important;
+}
+
+.q-scrollarea__bar {
+  background: transparent !important;
+}
+
+// Superficies oscuras (header, drawer, cards)
+.bar-panel {
+  background: var(--bar-surface) !important;
+  border-color: var(--bar-border) !important;
+}
+
+.bg-dark {
+  background: var(--bar-bg) !important;
+}
+
+// Precios y montos — dorado del menú
+.text-price,
+.text-amber {
+  color: var(--bar-gold) !important;
+}
+
+// Layouts con drawer
+.caja-layout,
+.mozos-layout {
+  .q-page-container {
+    overflow: hidden;
+    height: 100%;
+    background: var(--bar-bg);
+  }
+
+  .q-page:not(.admin-page) {
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+
+// Tablas
+.q-table--dark,
+.q-table {
+  thead tr th {
+    color: var(--bar-cream);
+    font-weight: 600;
+  }
+}
+
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.admin-page__header {
+  flex: 0 0 auto;
+}
+
+.admin-page__table {
+  flex: 1 1 0;
+  min-height: 0;
+  height: 0;
+  display: flex;
+  flex-direction: column;
+
+  &.q-table--flat {
+    height: auto;
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .q-table__container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    border: none !important;
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .q-table__middle {
+    flex: 1 1 auto;
+    overflow: auto;
+  }
+
+  thead tr th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+}
+
+.bar-table--fit {
+  .q-table__middle {
+    overflow: hidden !important;
+  }
+}
+
+.admin-page__body {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+// Botones primarios — texto oscuro sobre dorado (como el banner del menú)
+.q-btn.bg-primary,
+.q-btn--standard.bg-primary {
+  color: #0c0c0c !important;
+  font-weight: 600;
+}
+
+// Cards del dashboard y menú
+.bg-grey-10 {
+  background: var(--bar-surface-2) !important;
+  border-color: var(--bar-border) !important;
+}
+
+// Login
+.login-card {
+  background: var(--bar-surface) !important;
+  border-color: var(--bar-border) !important;
+}
+
+.login-brand {
+  color: var(--bar-gold);
+  letter-spacing: 0.04em;
 }

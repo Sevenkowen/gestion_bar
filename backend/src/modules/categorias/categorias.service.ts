@@ -8,7 +8,7 @@ export class CategoriasService {
 
   findAll(branchId: number) {
     return this.prisma.category.findMany({
-      where: { branchId },
+      where: { branchId, active: true },
       orderBy: { sortOrder: 'asc' },
     });
   }
@@ -31,6 +31,17 @@ export class CategoriasService {
 
   async remove(id: number, branchId: number) {
     await this.findOne(id, branchId);
+
+    const productsInUse = await this.prisma.product.count({
+      where: { branchId, categoryId: id, active: true, deletedAt: null },
+    });
+
+    if (productsInUse > 0) {
+      throw new ConflictException(
+        `No se puede eliminar: hay ${productsInUse} producto(s) activo(s) en esta categoría. Reasigná o desactivá esos productos primero.`,
+      );
+    }
+
     return this.prisma.category.update({
       where: { id },
       data: { active: false },

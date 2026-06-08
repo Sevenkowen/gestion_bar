@@ -6,4 +6,15 @@ export const adminApi = {
   usuarios: () => api.get<User[]>('/users').then((r) => r.data),
   crearUsuario: (data: { username: string; password: string; name: string; role: RoleName }) =>
     api.post('/users', data).then((r) => r.data),
+  actualizarUsuario: (
+    id: number,
+    data: {
+      name?: string;
+      username?: string;
+      password?: string;
+      role?: RoleName;
+      active?: boolean;
+    },
+  ) => api.put(`/users/${id}`, data).then((r) => r.data),
+  desactivarUsuario: (id: number) => api.delete(`/users/${id}`).then((r) => r.data),
 };

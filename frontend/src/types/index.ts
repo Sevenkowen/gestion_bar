@@ -12,6 +12,7 @@ export interface User {
   role: RoleName;
   branchId: number;
   branchName?: string;
+  active?: boolean;
 }
 
 export interface LoginResponse {
@@ -131,7 +132,35 @@ export interface MesaPendiente {
 }
 
 export interface DashboardStats {
+  salesToday: number;
+  salesTodayChangePct: number | null;
   ordersToday: number;
+  ordersTodayChange: number;
+  activeTables: number;
+  totalTables: number;
+  tablesOccupancyPct: number;
   lowStockAlerts: number;
   pendingPrintJobs: number;
+  salesLast7Days: { label: string; date: string; amount: number }[];
+  ordersLast7Days: { label: string; date: string; count: number }[];
+  topProducts: { name: string; quantity: number }[];
+  alerts: {
+    lowStockCount: number;
+    disconnectedPrinters: number;
+    allOk: boolean;
+  };
+  monthSummary: {
+    totalSales: number;
+    totalOrders: number;
+    avgTicket: number;
+    productsSold: number;
+  };
+  recentOrders: {
+    id: number;
+    time: string;
+    location: string;
+    status: string;
+    statusLabel: string;
+    total: number;
+  }[];
 }

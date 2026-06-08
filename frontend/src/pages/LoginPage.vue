@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { useAuthStore } from '@/stores/auth.store';
+import BarLogo from '@/components/brand/BarLogo.vue';
 
 const router = useRouter();
 const $q = useQuasar();
@@ -24,11 +25,10 @@ async function onSubmit() {
 
 <template>
   <q-page class="flex flex-center bg-dark">
-    <q-card flat bordered class="login-card q-pa-lg">
+    <q-card flat bordered class="login-card q-pa-lg" dark>
       <q-card-section class="text-center">
-        <q-icon name="restaurant" size="48px" color="amber" />
-        <div class="text-h5 q-mt-md text-weight-bold">SistemaBar</div>
-        <div class="text-caption text-grey-5">Gestión de bar & restaurante</div>
+        <BarLogo size="xl" class="login-logo" />
+        <div class="text-caption q-mt-md" style="color: var(--bar-text-muted)">Gestión de bar & restaurante</div>
       </q-card-section>
 
       <q-card-section>
@@ -73,6 +73,9 @@ async function onSubmit() {
 .login-card {
   width: 100%;
   max-width: 400px;
-  background: #1a1a1a;
+}
+
+.login-logo {
+  margin-inline: auto;
 }
 </style>

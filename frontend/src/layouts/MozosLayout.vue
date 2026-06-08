@@ -12,8 +12,8 @@ function logout() {
 </script>
 
 <template>
-  <q-layout view="hHh lpR fFf" class="bg-dark">
-    <q-header elevated class="bg-grey-10">
+  <q-layout view="hHh Lpr lFf" class="fit bg-dark mozos-layout">
+    <q-header class="bar-panel">
       <q-toolbar>
         <q-toolbar-title>
           <q-icon name="restaurant" class="q-mr-sm" />
