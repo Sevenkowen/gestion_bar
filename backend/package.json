@@ -6,6 +6,7 @@
   "scripts": {
     "build": "nest build && npm run build:seed",
     "build:seed": "tsc -p prisma/tsconfig.seed.json",
+    "import:insumos": "ts-node prisma/import-insumos.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/src/main",
@@ -46,7 +47,8 @@
     "pino-http": "^10.3.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.0",
